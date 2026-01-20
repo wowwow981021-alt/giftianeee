@@ -3,22 +3,22 @@
 }
 
 body {
-  font-family: 'Noto Sans KR', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  background: #f8f9fa;
+  background: #ffffff;
   min-height: 100vh;
   line-height: 1.6;
+  color: #333;
 }
 
 h1 {
   text-align: center;
-  color: #2c3e50;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 2.5em;
+  color: #333;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 600;
+  font-size: 2em;
   margin-bottom: 30px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
   letter-spacing: -0.5px;
 }
 
@@ -31,36 +31,17 @@ h1 {
 }
 
 .product {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08), 0 3px 10px rgba(0,0,0,0.05);
-  text-align: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.8);
-}
-
-.product::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  transition: left 0.5s;
-}
-
-.product:hover::before {
-  left: 100%;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  text-align: left;
+  transition: box-shadow 0.2s;
+  border: 1px solid #e0e0e0;
 }
 
 .product:hover {
-  transform: translateY(-12px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.1);
-  border-color: rgba(33, 150, 243, 0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .product img {
@@ -77,88 +58,51 @@ h1 {
 }
 
 .product h3 {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 600;
-  color: #2c3e50;
+  color: #333;
   margin: 15px 0 10px 0;
-  font-size: 1.3em;
-  transition: color 0.3s;
+  font-size: 1.2em;
+  transition: color 0.2s;
 }
 
 .product:hover h3 {
-  color: #2196F3;
+  color: #555;
 }
 
 button {
   margin: 6px;
   padding: 12px 24px;
   border: none;
-  border-radius: 12px;
+  border-radius: 6px;
   cursor: pointer;
-  font-family: 'Noto Sans KR', 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 500;
   font-size: 0.95em;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  letter-spacing: 0.3px;
-}
-
-button::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-button:hover::before {
-  width: 300px;
-  height: 300px;
+  transition: background 0.2s;
+  background: #333;
+  color: white;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  background: #555;
 }
 
 button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: #222;
 }
 
 /* 기본 버튼 스타일 */
 .product button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   width: 100%;
   margin: 6px 0;
+  border: none;
 }
 
 .product button:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-.product button:nth-of-type(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.product button:nth-of-type(2):hover {
-  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
-}
-
-.product button:nth-of-type(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.product button:nth-of-type(3):hover {
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  background: #555;
 }
 
 input[type="text"],
@@ -206,16 +150,15 @@ label {
 }
 
 .cart-item {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: box-shadow 0.2s;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
 }
 
 .cart-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-  border-color: rgba(33, 150, 243, 0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 input[type="number"] {
@@ -243,39 +186,33 @@ a:hover {
 }
 
 a button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 6px;
   font-weight: 500;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 a button:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: #555;
 }
 
 /* 구분선 스타일 */
 hr {
   border: none;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+  height: 1px;
+  background: #e0e0e0;
   margin: 30px 0;
 }
 
 /* 가격 스타일 개선 */
 .product-price-card {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 700;
   font-size: 1.5em;
   margin: 12px 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #333;
   letter-spacing: -0.5px;
 }
 
@@ -299,17 +236,17 @@ hr {
 }
 
 .modal-content {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  background: #ffffff;
   margin: 2% auto;
   padding: 0;
-  border-radius: 25px;
+  border-radius: 8px;
   width: 90%;
   max-width: 900px;
   max-height: 90vh;
   overflow-y: auto;
-  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.8);
+  animation: slideDown 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border: 1px solid #e0e0e0;
 }
 
 @keyframes slideDown {
@@ -367,22 +304,18 @@ hr {
 
 .product-detail-info h2 {
   margin-top: 0;
-  color: #2c3e50;
-  font-size: 2em;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+  color: #333;
+  font-size: 1.8em;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 600;
 }
 
 .product-price {
   font-size: 2em;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #333;
   margin: 15px 0 25px 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
 .detail-section {
@@ -540,7 +473,7 @@ hr {
 @media screen and (max-width: 767px) {
   body {
     padding: 15px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    background: #ffffff;
   }
   
   h1 {
@@ -635,11 +568,11 @@ hr {
 }
 
 .support-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  background: #333 !important;
 }
 
 .support-btn:hover {
-  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+  background: #555 !important;
 }
 
 /* FAQ 섹션 */
@@ -648,20 +581,21 @@ hr {
 }
 
 .faq-section h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 600;
-  color: #2c3e50;
+  color: #333;
   margin-bottom: 20px;
-  font-size: 1.8em;
+  font-size: 1.5em;
 }
 
 .faq-item {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 15px;
+  background: #ffffff;
+  border-radius: 8px;
   margin-bottom: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-  transition: all 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s;
 }
 
 .faq-item:hover {
@@ -680,13 +614,13 @@ hr {
 }
 
 .faq-question:hover {
-  background: rgba(102, 126, 234, 0.05);
+  background: #f5f5f5;
 }
 
 .faq-toggle {
   font-size: 1.5em;
   font-weight: bold;
-  color: #667eea;
+  color: #333;
   transition: transform 0.3s;
 }
 
@@ -712,11 +646,11 @@ hr {
 }
 
 .inquiry-section h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 600;
-  color: #2c3e50;
+  color: #333;
   margin-bottom: 25px;
-  font-size: 1.8em;
+  font-size: 1.5em;
   text-align: center;
 }
 
@@ -729,43 +663,22 @@ hr {
 }
 
 .inquiry-btn {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border: 2px solid rgba(102, 126, 234, 0.2);
-  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   padding: 30px 20px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.inquiry-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(102, 126, 234, 0.1);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.inquiry-btn:hover::before {
-  width: 300px;
-  height: 300px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .inquiry-btn:hover {
-  transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-color: #ccc;
 }
 
 .inquiry-icon {
@@ -778,10 +691,10 @@ hr {
 }
 
 .inquiry-text {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 600;
   font-size: 1.2em;
-  color: #2c3e50;
+  color: #333;
 }
 
 /* 채팅 모달 */
@@ -807,12 +720,13 @@ hr {
   height: 85vh;
   max-height: 700px;
   margin: 0 auto;
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 25px 25px 0 0;
+  background: #ffffff;
+  border-radius: 8px 8px 0 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
-  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  border: 1px solid #e0e0e0;
+  animation: slideUp 0.3s ease;
 }
 
 @keyframes slideUp {
@@ -826,20 +740,20 @@ hr {
 
 .chat-header {
   padding: 20px 25px;
-  border-bottom: 2px solid #eee;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 25px 25px 0 0;
+  background: #333;
+  border-radius: 8px 8px 0 0;
   color: white;
 }
 
 .chat-header h3 {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 600;
-  font-size: 1.3em;
+  font-size: 1.2em;
 }
 
 .chat-close {
@@ -896,7 +810,7 @@ hr {
 }
 
 .user-message .message-content {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   border-bottom-right-radius: 4px;
 }
@@ -945,10 +859,9 @@ hr {
 }
 
 .quick-btn:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   border-color: transparent;
-  transform: translateY(-2px);
 }
 
 .chat-input-container {
@@ -969,25 +882,23 @@ hr {
 
 #chatInput:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #333;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
 .send-btn {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   border: none;
-  border-radius: 25px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: background 0.2s;
 }
 
 .send-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: #555;
 }
 
 .send-btn:active {
@@ -1102,24 +1013,25 @@ hr {
 }
 
 .payment-modal-content {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 25px;
-    width: 90%;
+  background: #ffffff;
+  border-radius: 8px;
+  width: 90%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  animation: slideDown 0.3s ease;
+  border: 1px solid #e0e0e0;
 }
 
 .payment-header {
   padding: 25px;
-  border-bottom: 2px solid #eee;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 25px 25px 0 0;
+  background: #333;
+  border-radius: 8px 8px 0 0;
   color: white;
 }
 
@@ -1290,20 +1202,18 @@ hr {
 .complete-btn {
   margin-top: 30px;
   padding: 15px 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 6px;
   font-size: 1.1em;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: background 0.2s;
 }
 
 .complete-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: #555;
 }
 
 /* 주문 완료 페이지 */
@@ -1318,15 +1228,15 @@ hr {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  background: #4CAF50;
   color: white;
   font-size: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 30px;
-  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+  animation: scaleIn 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .order-complete-container h1 {
@@ -1337,11 +1247,12 @@ hr {
 }
 
 .order-info-card {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 20px;
+  background: #ffffff;
+  border-radius: 8px;
   padding: 30px;
   margin: 30px 0;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
   text-align: left;
 }
 
@@ -1422,26 +1333,23 @@ hr {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: none;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: #555;
 }
 
 .btn-secondary {
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #333;
+  border: 1px solid #e0e0e0;
 }
 
 .btn-secondary:hover {
-  background: #667eea;
-  color: white;
-  transform: translateY(-2px);
+  background: #f5f5f5;
 }
 
 /* 모바일 채팅 모달 */
@@ -1499,13 +1407,13 @@ hr {
 }
 
 /* ============================================
-   쇼핑몰 헤더 스타일
+   헤더 스타일 (심플)
    ============================================ */
 .shop-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #ffffff;
+  color: #333;
   padding: 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-bottom: 1px solid #e0e0e0;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -1526,12 +1434,11 @@ hr {
 }
 
 .shop-logo {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.8em;
-  font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1.5em;
+  font-weight: 600;
   margin: 0;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  color: #333;
   cursor: pointer;
 }
 
@@ -1600,15 +1507,15 @@ hr {
   position: relative;
   display: flex;
   align-items: center;
-  color: white;
+  color: #333;
   text-decoration: none;
-  font-size: 1.5em;
+  font-size: 1.3em;
   padding: 8px;
-  transition: transform 0.3s;
+  transition: opacity 0.2s;
 }
 
 .cart-icon-link:hover {
-  transform: scale(1.1);
+  opacity: 0.7;
 }
 
 .cart-badge {
@@ -1629,22 +1536,18 @@ hr {
 }
 
 .menu-btn {
-  background: rgba(255,255,255,0.2);
-  color: white;
+  background: transparent;
+  color: #333;
   border: none;
   padding: 10px 15px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.3em;
-  transition: background 0.3s;
+  transition: background 0.2s;
 }
 
 .menu-btn:hover {
-  background: rgba(255,255,255,0.3);
-}
-
-.menu-btn.active {
-  background: rgba(255,255,255,0.4);
+  background: #f5f5f5;
 }
 
 /* ============================================
@@ -1684,7 +1587,7 @@ hr {
 }
 
 .category-menu-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #333;
   color: white;
   padding: 20px;
   display: flex;
@@ -1744,15 +1647,15 @@ hr {
 
 .category-menu-item:hover {
   background: #f8f9fa;
-  border-left-color: #667eea;
+  border-left-color: #333;
   padding-left: 30px;
 }
 
 .category-menu-item.active {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  color: #667eea;
+  background: #f5f5f5;
+  color: #333;
   font-weight: 600;
-  border-left-color: #667eea;
+  border-left-color: #333;
 }
 
 /* 네비게이션 메뉴 */
@@ -1785,26 +1688,26 @@ hr {
 
 .nav-tab.active {
   background: white;
-  color: #667eea;
+  color: #333;
   font-weight: 600;
 }
 
 /* ============================================
-   배너 섹션
+   배너 섹션 (심플)
    ============================================ */
 .banner-section {
   position: relative;
   margin: 20px auto;
-  max-width: 1400px;
+  max-width: 1200px;
   padding: 0 20px;
 }
 
 .banner-slider {
   position: relative;
-  height: 200px;
-  border-radius: 15px;
+  height: 150px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
 }
 
 .banner-item {
@@ -1813,7 +1716,7 @@ hr {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1826,28 +1729,29 @@ hr {
 }
 
 .banner-item:nth-child(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: #f8f9fa;
 }
 
 .banner-item:nth-child(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: #f8f9fa;
 }
 
 .banner-content {
   text-align: center;
-  color: white;
+  color: #333;
 }
 
 .banner-content h2 {
-  font-size: 2em;
+  font-size: 1.5em;
   margin: 0 0 10px 0;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  font-weight: 600;
+  color: #333;
 }
 
 .banner-content p {
-  font-size: 1.2em;
+  font-size: 1em;
   margin: 0;
-  opacity: 0.9;
+  color: #666;
 }
 
 .banner-dots {
@@ -1867,7 +1771,7 @@ hr {
 }
 
 .dot.active {
-  background: #667eea;
+  background: #333;
   width: 25px;
   border-radius: 5px;
 }
@@ -2130,13 +2034,14 @@ hr {
 }
 
 /* ============================================
-   푸터
+   푸터 (심플)
    ============================================ */
 .shop-footer {
-  background: #2c3e50;
-  color: white;
+  background: #f8f9fa;
+  color: #333;
   margin-top: 60px;
   padding: 40px 20px 20px;
+  border-top: 1px solid #e0e0e0;
 }
 
 .footer-content {
@@ -2152,35 +2057,35 @@ hr {
   margin: 0 0 15px 0;
   font-size: 1.2em;
   font-weight: 600;
-  color: #ecf0f1;
+  color: #333;
 }
 
 .footer-section p {
   margin: 8px 0;
-  color: #bdc3c7;
+  color: #666;
   font-size: 0.9em;
 }
 
 .footer-link {
   display: block;
-  color: #bdc3c7;
+  color: #666;
   text-decoration: none;
   margin: 8px 0;
-  transition: color 0.3s;
+  transition: color 0.2s;
   font-size: 0.9em;
 }
 
 .footer-link:hover {
-  color: white;
+  color: #333;
 }
 
 .footer-bottom {
   max-width: 1400px;
   margin: 0 auto;
   padding-top: 20px;
-  border-top: 1px solid #34495e;
+  border-top: 1px solid #e0e0e0;
   text-align: center;
-  color: #95a5a6;
+  color: #999;
   font-size: 0.85em;
 }
 
@@ -2485,16 +2390,17 @@ hr {
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 
 .price-info-header h2 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.8em;
-  color: #2c3e50;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1.5em;
+  color: #333;
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .update-time {
@@ -2507,20 +2413,31 @@ hr {
   align-items: center;
   gap: 15px;
   padding: 20px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s;
 }
 
 .gift-card-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .gift-card-icon {
   font-size: 3em;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+.gift-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 .gift-card-item .product-info {
@@ -2544,8 +2461,8 @@ hr {
 .rate-value {
   font-size: 1.8em;
   font-weight: 700;
-  color: #667eea;
-  font-family: 'Poppins', sans-serif;
+  color: #333;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
 .gift-card-desc {
@@ -2556,20 +2473,19 @@ hr {
 
 .gift-card-item .btn-buy-now {
   margin-top: 10px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 10px 20px;
+  background: #333;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.2s;
   width: auto;
 }
 
 .gift-card-item .btn-buy-now:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: #555;
 }
 
 .main-action-btn {

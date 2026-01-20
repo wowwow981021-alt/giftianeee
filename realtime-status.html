@@ -154,18 +154,34 @@ function renderStatusList() {
     return;
   }
   
-  container.innerHTML = statusList.map(status => `
-    <div class="status-item">
-      <div class="status-icon">${status.icon}</div>
-      <div class="status-info">
-        <div class="status-card-name">${status.cardName} ${status.count}매${status.amount.toLocaleString()}원</div>
-        <div class="status-customer">${status.customer}님</div>
-      </div>
-      <div class="status-badge ${status.status === '입금완료' ? 'completed' : 'pending'}">
-        ${status.status}
-      </div>
-    </div>
-  `).join('');
+    container.innerHTML = statusList.map(status => {
+      // 케이티켓 홈페이지 이미지 사용
+      const typeMap = {
+        '컬쳐랜드(16핀)': 'cul_1',
+        '컬쳐랜드 교환권': 'cul_ex',
+        '문화상품권(18핀)': 'culture',
+        '틴캐시': 'tincash',
+        '롯데모바일 교환권': 'lotte'
+      };
+      const cardType = typeMap[status.cardName] || 'cul_1';
+      const imageUrl = `https://kticket.co.kr/media/images/datas/img_${cardType}.webp`;
+      
+      return `
+        <div class="status-item">
+          <div class="status-icon">
+            <img src="${imageUrl}" alt="${status.cardName}" class="status-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span style="display:none; font-size:2em;">${status.icon}</span>
+          </div>
+          <div class="status-info">
+            <div class="status-card-name">${status.cardName} ${status.count}매${status.amount.toLocaleString()}원</div>
+            <div class="status-customer">${status.customer}님</div>
+          </div>
+          <div class="status-badge ${status.status === '입금완료' ? 'completed' : 'pending'}">
+            ${status.status}
+          </div>
+        </div>
+      `;
+    }).join('');
 }
 
 // 새로고침
@@ -223,6 +239,18 @@ document.addEventListener('DOMContentLoaded', function() {
 .status-icon {
   font-size: 2em;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.status-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 .status-info {

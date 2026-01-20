@@ -274,8 +274,13 @@ function renderGiftCards() {
   giftCards.forEach(card => {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'product gift-card-item';
+    // 케이티켓 홈페이지 이미지 URL 사용 (실제 이미지 경로에 맞게 수정 필요)
+    const imageUrl = `https://kticket.co.kr/media/images/datas/img_${card.type}.webp`;
     cardDiv.innerHTML = `
-      <div class="gift-card-icon">${card.icon}</div>
+      <div class="gift-card-icon">
+        <img src="${imageUrl}" alt="${card.name}" class="gift-card-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span style="display:none; font-size:2em;">${card.icon}</span>
+      </div>
       <div class="product-info">
         <h3 class="product-name">${card.name}</h3>
         <div class="gift-card-rate">
