@@ -1710,17 +1710,21 @@ hr {
    ============================================ */
 .banner-section {
   position: relative;
-  margin: 20px auto;
+  margin: 0 auto 20px;
   max-width: 1200px;
   padding: 0 20px;
 }
 
 .banner-slider {
   position: relative;
-  height: 150px;
+  height: 200px;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
+  background-image: url('batang.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .banner-item {
@@ -1729,7 +1733,7 @@ hr {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #f8f9fa;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1742,29 +1746,34 @@ hr {
 }
 
 .banner-item:nth-child(2) {
-  background: #f8f9fa;
+  background: transparent;
 }
 
 .banner-item:nth-child(3) {
-  background: #f8f9fa;
+  background: transparent;
 }
 
 .banner-content {
-  text-align: center;
-  color: #333;
+  text-align: left;
+  color: #fff;
+  padding: 20px;
+  position: relative;
+  z-index: 2;
 }
 
 .banner-content h2 {
-  font-size: 1.5em;
+  font-size: 1.8em;
   margin: 0 0 10px 0;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .banner-content p {
-  font-size: 1em;
+  font-size: 1.1em;
   margin: 0;
-  color: #666;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .banner-dots {
@@ -2255,15 +2264,19 @@ hr {
   }
   
   .banner-slider {
-    height: 160px;
+    height: 180px;
+  }
+  
+  .banner-content {
+    padding: 15px;
   }
   
   .banner-content h2 {
-    font-size: 1.3em;
+    font-size: 1.4em;
   }
   
   .banner-content p {
-    font-size: 0.9em;
+    font-size: 1em;
   }
   
   .filter-section {
@@ -2284,6 +2297,38 @@ hr {
     grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
     gap: 12px;
     margin-top: 12px;
+  }
+  
+  .realtime-status-section {
+    margin-top: 40px;
+    padding: 20px 12px;
+  }
+  
+  .status-header h2 {
+    font-size: 1.3em;
+  }
+  
+  .status-item {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .status-icon {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .status-card-name {
+    font-size: 0.9em;
+  }
+  
+  .status-customer {
+    font-size: 0.85em;
+  }
+  
+  .status-badge {
+    font-size: 0.8em;
+    padding: 4px 10px;
   }
   
   .product-info {
@@ -2383,21 +2428,119 @@ hr {
   }
   
   .banner-slider {
-    height: 140px;
+    height: 160px;
+  }
+  
+  .banner-content {
+    padding: 12px;
   }
   
   .banner-content h2 {
-    font-size: 1.1em;
+    font-size: 1.2em;
   }
   
   .banner-content p {
-    font-size: 0.85em;
+    font-size: 0.9em;
   }
 }
 
 /* ============================================
    상품권 매입 앱 전용 스타일
    ============================================ */
+
+.realtime-status-section {
+  margin-top: 60px;
+  padding: 30px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.status-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.status-header h2 {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s;
+}
+
+.status-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.status-icon {
+  font-size: 2em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.status-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-card-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.status-customer {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.status-badge.completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.pending {
+  background: #fff3e0;
+  color: #e65100;
+}
 
 .price-info-header {
   text-align: center;

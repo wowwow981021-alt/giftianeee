@@ -63,8 +63,9 @@
   <div class="banner-slider" id="bannerSlider">
     <div class="banner-item active">
       <div class="banner-content">
-        <h2>24시간 실시간 매입</h2>
-        <p>365일 자동화 시스템</p>
+        <h2>다시 한번 편리해진</h2>
+        <h2 style="color: #4ec1d2; margin-top: 5px;">24시간 실시간매입</h2>
+        <h2 style="margin-top: 5px;">365일 자동화 시스템</h2>
       </div>
     </div>
     <div class="banner-item">
@@ -102,6 +103,15 @@
         상품권 현금교환 신청
       </button>
     </a>
+  </div>
+
+  <!-- 실시간 진행 현황 -->
+  <div class="realtime-status-section">
+    <div class="status-header">
+      <h2>실시간 진행 현황</h2>
+      <p style="color: #666; margin-bottom: 20px;">최근 매입 현황입니다</p>
+    </div>
+    <div id="realtimeStatusList" class="status-list"></div>
   </div>
 </main>
 
@@ -479,12 +489,134 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// 실시간 매입 현황 데이터
+const sampleStatuses = [
+  { cardName: '컬쳐랜드(16핀)', count: 1, amount: 50000, customer: '강*문', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 1, amount: 5000, customer: '박*지', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 3, amount: 25000, customer: '도*진', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 3, amount: 150000, customer: '이*조', status: '입금완료', icon: '🎫' },
+  { cardName: '문화상품권(18핀)', count: 4, amount: 40000, customer: '이*진', status: '입금완료', icon: '🎭' },
+  { cardName: '컬쳐랜드(16핀)', count: 4, amount: 200000, customer: '김*태', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 1, amount: 30000, customer: '이*조', status: '입금완료', icon: '🎫' },
+  { cardName: '틴캐시', count: 1, amount: 50000, customer: '표*환', status: '입금완료', icon: '💳' },
+  { cardName: '컬쳐랜드 교환권', count: 1, amount: 30000, customer: '하*석', status: '입금완료', icon: '🎟️' },
+  { cardName: '컬쳐랜드(16핀)', count: 6, amount: 300000, customer: '원*훈', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 1, amount: 200000, customer: '김*구', status: '입금완료', icon: '🏪' },
+  { cardName: '컬쳐랜드(16핀)', count: 2, amount: 60000, customer: '곽*정', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 6, amount: 300000, customer: '김*구', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 4, amount: 200000, customer: '원*훈', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 7, amount: 350000, customer: '곽*정', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 2, amount: 600000, customer: '문*수', status: '입금완료', icon: '🏪' },
+  { cardName: '컬쳐랜드(16핀)', count: 3, amount: 90000, customer: '조*훈', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 1, amount: 50000, customer: '박*우', status: '입금완료', icon: '🏪' },
+  { cardName: '컬쳐랜드(16핀)', count: 2, amount: 100000, customer: '이*지', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 2, amount: 600000, customer: '신*철', status: '입금완료', icon: '🏪' }
+];
+
+// 실제 주문 데이터와 합치기
+function getStatusList() {
+  const orders = JSON.parse(localStorage.getItem('giftCardOrders')) || [];
+  const statusList = [];
+  
+  // 실제 주문 데이터 변환
+  orders.forEach(order => {
+    statusList.push({
+      cardName: order.cardName,
+      count: 1,
+      amount: order.amount,
+      customer: order.customerName ? order.customerName.replace(/(?<=.{1})./g, '*') : '고*객',
+      status: getStatusText(order.status),
+      icon: getCardIcon(order.type),
+      type: order.type
+    });
+  });
+  
+  // 샘플 데이터와 합치기
+  return [...statusList, ...sampleStatuses].slice(0, 20);
+}
+
+function getStatusText(status) {
+  const statusMap = {
+    '대기중': '검증중',
+    '검증중': '검증중',
+    '입금완료': '입금완료',
+    '완료': '입금완료',
+    '취소': '취소됨'
+  };
+  return statusMap[status] || '검증중';
+}
+
+function getCardIcon(type) {
+  const iconMap = {
+    'cul_1': '🎫',
+    'cul_ex': '🎟️',
+    'culture': '🎭',
+    'culture_ex': '🎨',
+    'book': '📚',
+    'book_ex': '📖',
+    'tincash': '💳',
+    'lotte': '🏪',
+    'google': '🔍',
+    'starbucks_e': '☕',
+    'starbucks_24': '☕',
+    'tincash_ex': '💳',
+    'shinsegae': '🛍️'
+  };
+  return iconMap[type] || '🎫';
+}
+
+// 실시간 현황 목록 렌더링
+function renderRealtimeStatus() {
+  const statusList = getStatusList();
+  const container = document.getElementById('realtimeStatusList');
+  
+  if (!container) return;
+  
+  if (statusList.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">매입 현황이 없습니다.</p>';
+    return;
+  }
+  
+  container.innerHTML = statusList.map(status => {
+    // 케이티켓 홈페이지 이미지 사용
+    const typeMap = {
+      '컬쳐랜드(16핀)': 'cul_1',
+      '컬쳐랜드 교환권': 'cul_ex',
+      '문화상품권(18핀)': 'culture',
+      '틴캐시': 'tincash',
+      '롯데모바일 교환권': 'lotte',
+      '북앤라이프 상품권': 'book'
+    };
+    const cardType = typeMap[status.cardName] || status.type || 'cul_1';
+    const imageUrl = `https://kticket.co.kr/media/images/datas/img_${cardType}.webp`;
+    
+    return `
+      <div class="status-item">
+        <div class="status-icon">
+          <img src="${imageUrl}" alt="${status.cardName}" class="status-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span style="display:none; font-size:2em;">${status.icon}</span>
+        </div>
+        <div class="status-info">
+          <div class="status-card-name">${status.cardName} ${status.count}매${status.amount.toLocaleString()}원</div>
+          <div class="status-customer">${status.customer}님</div>
+        </div>
+        <div class="status-badge ${status.status === '입금완료' ? 'completed' : 'pending'}">
+          ${status.status}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
   updateTime();
   renderGiftCards();
+  renderRealtimeStatus();
   // 시간 업데이트 (1분마다)
   setInterval(updateTime, 60000);
+  // 실시간 현황 업데이트 (30초마다)
+  setInterval(renderRealtimeStatus, 30000);
 });
 </script>
 
