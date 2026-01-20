@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>상품권 현금교환 | 이안티켓</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    // 텔레그램 WebApp 강제 확장 (모바일 최적화)
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+
+<!-- 헤더 -->
+<header class="shop-header">
+  <div class="header-container">
+    <div class="header-left">
+      <h1 class="shop-logo">이안티켓</h1>
+    </div>
+    <div class="header-right">
+      <a href="order-inquiry.html" class="cart-icon-link">
+        <span class="cart-icon">📋</span>
+      </a>
+      <a href="realtime-status.html" class="cart-icon-link">
+        <span class="cart-icon">📊</span>
+      </a>
+      <button class="menu-btn" id="menuBtn">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- 배너 섹션 -->
+<div class="banner-section">
+  <div class="banner-slider" id="bannerSlider">
+    <div class="banner-item active">
+      <div class="banner-content">
+        <h2>24시간 실시간 매입</h2>
+        <p>365일 자동화 시스템</p>
+      </div>
+    </div>
+    <div class="banner-item">
+      <div class="banner-content">
+        <h2>빠른 입금 서비스</h2>
+        <p>신속하고 안전한 거래</p>
+      </div>
+    </div>
+    <div class="banner-item">
+      <div class="banner-content">
+        <h2>다양한 상품권 매입</h2>
+        <p>컬쳐랜드, 문화상품권, 스타벅스 등</p>
+      </div>
+    </div>
+  </div>
+  <div class="banner-dots">
+    <span class="dot active" data-slide="0"></span>
+    <span class="dot" data-slide="1"></span>
+    <span class="dot" data-slide="2"></span>
+  </div>
+</div>
+
+<!-- 메인 콘텐츠 -->
+<main class="main-content">
+  <div class="price-info-header">
+    <h2>상품권 매입시세 안내</h2>
+    <p class="update-time" id="updateTime"></p>
+  </div>
+  
+  <div class="product-container" id="productContainer"></div>
+  
+  <div class="main-action-btn">
+    <a href="giftcard-apply.html">
+      <button class="btn-primary" style="width: 100%; padding: 18px; font-size: 1.2em; margin-top: 30px;">
+        상품권 현금교환 신청
+      </button>
+    </a>
+  </div>
+</main>
+
+<!-- 푸터 -->
+<footer class="shop-footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>고객센터</h3>
+      <p>24시간 운영</p>
+      <a href="support.html" class="footer-link">💬 고객 상담</a>
+      <a href="realtime-status.html" class="footer-link">📊 실시간 진행현황</a>
+    </div>
+    <div class="footer-section">
+      <h3>서비스 안내</h3>
+      <p>24시간 실시간 매입</p>
+      <p>365일 자동화 시스템</p>
+      <p>빠른 입금 서비스</p>
+    </div>
+    <div class="footer-section">
+      <h3>회사 정보</h3>
+      <p>이안티켓</p>
+      <p>사업자등록번호: 482-86-02091</p>
+      <p>대표: 한정환</p>
+    </div>
+    <div class="footer-section">
+      <h3>정책</h3>
+      <a href="#" class="footer-link" id="termsLink">이용약관</a>
+      <a href="#" class="footer-link" id="privacyLink">개인정보처리방침</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 이안티켓. All rights reserved.</p>
+    <p style="font-size: 0.8em; margin-top: 5px;">※ 이안티켓은 상품권을 판매하는 업체가 아닙니다.</p>
+  </div>
+</footer>
+
+<!-- 정책 모달 -->
+<div id="policyModal" class="modal" style="display: none;">
+  <div class="modal-content policy-modal-content">
+    <span class="close" id="closePolicyModal">&times;</span>
+    <div id="policyModalBody"></div>
+  </div>
+</div>
+
+<script src="cart.js"></script>
+<script>
+// 상품권 데이터
+const giftCards = [
+  {
+    id: 1,
+    name: '컬쳐랜드 상품권',
+    rate: 90.00,
+    type: 'cul_1',
+    description: '컬쳐랜드(16핀) 매입 수수료는 10% 입니다.',
+    icon: '🎫'
+  },
+  {
+    id: 2,
+    name: '컬쳐랜드 교환권',
+    rate: 90.00,
+    type: 'cul_ex',
+    description: '컬쳐랜드 교환권 매입',
+    icon: '🎟️'
+  },
+  {
+    id: 3,
+    name: '문화상품권',
+    rate: 90.00,
+    type: 'culture',
+    description: '문화상품권(18핀) 매입',
+    icon: '🎭'
+  },
+  {
+    id: 4,
+    name: '문화 교환권',
+    rate: 90.00,
+    type: 'culture_ex',
+    description: '문화 교환권 매입',
+    icon: '🎨'
+  },
+  {
+    id: 5,
+    name: '북앤라이프',
+    rate: 90.00,
+    type: 'book',
+    description: '북앤라이프 상품권 매입',
+    icon: '📚'
+  },
+  {
+    id: 6,
+    name: '북앤라이프 교환권',
+    rate: 90.00,
+    type: 'book_ex',
+    description: '북앤라이프 교환권 매입',
+    icon: '📖'
+  },
+  {
+    id: 7,
+    name: '틴캐시',
+    rate: 90.00,
+    type: 'tincash',
+    description: '틴캐시 매입',
+    icon: '💳'
+  },
+  {
+    id: 8,
+    name: '롯데모바일 교환권',
+    rate: 93.00,
+    type: 'lotte',
+    description: '롯데모바일 교환권 매입',
+    icon: '🏪'
+  },
+  {
+    id: 9,
+    name: '구글 교환권',
+    rate: 90.00,
+    type: 'google',
+    description: '구글 교환권 매입',
+    icon: '🔍'
+  },
+  {
+    id: 10,
+    name: '스타벅스 e카드 교환권',
+    rate: 85.00,
+    type: 'starbucks_e',
+    description: '스타벅스 e카드 교환권 매입',
+    icon: '☕'
+  },
+  {
+    id: 11,
+    name: '스타벅스 기프트카드(24자리)',
+    rate: 85.00,
+    type: 'starbucks_24',
+    description: '스타벅스 기프트카드(24자리) 매입',
+    icon: '☕'
+  },
+  {
+    id: 12,
+    name: '틴캐시 교환권',
+    rate: 90.00,
+    type: 'tincash_ex',
+    description: '틴캐시 교환권 매입',
+    icon: '💳'
+  },
+  {
+    id: 13,
+    name: '신세계모바일상품권',
+    rate: 93.00,
+    type: 'shinsegae',
+    description: '신세계모바일상품권 매입',
+    icon: '🛍️'
+  }
+];
+
+// 현재 시간 업데이트
+function updateTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const timeElement = document.getElementById('updateTime');
+  if (timeElement) {
+    timeElement.textContent = `${hours}시 ${minutes}분 기준`;
+  }
+}
+
+// 상품권 목록 렌더링
+function renderGiftCards() {
+  const container = document.getElementById('productContainer');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  giftCards.forEach(card => {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'product gift-card-item';
+    cardDiv.innerHTML = `
+      <div class="gift-card-icon">${card.icon}</div>
+      <div class="product-info">
+        <h3 class="product-name">${card.name}</h3>
+        <div class="gift-card-rate">
+          <span class="rate-value">${card.rate.toFixed(2)}%</span>
+        </div>
+        <p class="gift-card-desc">${card.description}</p>
+        <button class="btn-buy-now" onclick="applyGiftCard('${card.name}', ${card.rate}, '${card.type}')">
+          매입 신청
+        </button>
+      </div>
+    `;
+    container.appendChild(cardDiv);
+  });
+}
+
+// 상품권 매입 신청
+function applyGiftCard(name, rate, type) {
+  // 선택한 상품권 정보를 localStorage에 저장
+  const selectedCard = {
+    name,
+    rate,
+    type,
+    timestamp: new Date().toISOString()
+  };
+  localStorage.setItem('selectedGiftCard', JSON.stringify(selectedCard));
+  
+  // 매입 신청 페이지로 이동
+  window.location.href = 'giftcard-apply.html';
+}
+
+// 배너 슬라이더
+let currentSlide = 0;
+const slides = document.querySelectorAll('.banner-item');
+const dots = document.querySelectorAll('.dot');
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('active', i === index);
+  });
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+}
+
+dots.forEach((dot, index) => {
+  dot.addEventListener('click', function() {
+    currentSlide = index;
+    showSlide(currentSlide);
+  });
+});
+
+// 배너 자동 슬라이드
+setInterval(() => {
+  currentSlide = (currentSlide + 1) % slides.length;
+  showSlide(currentSlide);
+}, 4000);
+
+// 정책 모달 열기 함수
+function openPolicyModal(type) {
+  const modal = document.getElementById('policyModal');
+  const modalBody = document.getElementById('policyModalBody');
+  
+  if (!modal || !modalBody) return;
+  
+  let title = '';
+  let content = '';
+  
+  if (type === 'terms') {
+    title = '이용약관';
+    content = `
+      <h2>${title}</h2>
+      <div class="policy-content">
+        <p><strong>제1조 (목적)</strong></p>
+        <p>이 약관은 이안티켓(이하 "회사")이 운영하는 상품권 현금교환 서비스의 이용과 관련하여 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+        
+        <p><strong>제2조 (정의)</strong></p>
+        <ul>
+          <li>"서비스"란 회사가 제공하는 상품권 현금교환 서비스를 의미합니다.</li>
+          <li>"이용자"란 서비스에 접속하여 이 약관에 따라 서비스를 받는 회원 및 비회원을 의미합니다.</li>
+          <li>"상품권"이란 컬쳐랜드, 문화상품권, 스타벅스 등 각종 상품권 및 교환권을 의미합니다.</li>
+        </ul>
+        
+        <p><strong>제3조 (서비스의 제공)</strong></p>
+        <p>1. 회사는 다음과 같은 서비스를 제공합니다:</p>
+        <ul>
+          <li>상품권 현금교환 신청 접수</li>
+          <li>상품권 검증 및 매입</li>
+          <li>입금 처리</li>
+        </ul>
+        
+        <p><strong>제4조 (매입 시세)</strong></p>
+        <p>1. 상품권 매입 시세는 시장 상황에 따라 변동될 수 있습니다.</p>
+        <p>2. 매입 시세는 실시간으로 업데이트되며, 신청 시점의 시세가 적용됩니다.</p>
+        
+        <p><strong>제5조 (입금)</strong></p>
+        <p>1. 상품권 검증 완료 후 입금이 진행됩니다.</p>
+        <p>2. 입금은 영업일 기준 1~2일 내 처리됩니다.</p>
+        
+        <p><strong>시행일자</strong></p>
+        <p>이 약관은 2024년 1월 1일부터 시행됩니다.</p>
+      </div>
+    `;
+  } else if (type === 'privacy') {
+    title = '개인정보처리방침';
+    content = `
+      <h2>${title}</h2>
+      <div class="policy-content">
+        <p><strong>제1조 (개인정보의 처리목적)</strong></p>
+        <p>이안티켓(이하 "회사")은 다음의 목적을 위하여 개인정보를 처리합니다.</p>
+        
+        <p><strong>1. 상품권 현금교환 서비스 제공</strong></p>
+        <ul>
+          <li>상품권 매입 신청 접수 및 처리</li>
+          <li>입금 처리 및 거래 내역 관리</li>
+        </ul>
+        
+        <p><strong>2. 고객 상담 및 문의 처리</strong></p>
+        <ul>
+          <li>고객 문의사항 접수 및 답변</li>
+        </ul>
+        
+        <p><strong>제2조 (처리하는 개인정보의 항목)</strong></p>
+        <p>회사는 다음의 개인정보 항목을 처리하고 있습니다:</p>
+        <ul>
+          <li><strong>필수항목:</strong> 이름, 전화번호, 계좌정보</li>
+          <li><strong>자동 수집 항목:</strong> IP주소, 쿠키, 서비스 이용 기록 등</li>
+        </ul>
+        
+        <p><strong>제3조 (개인정보 보호책임자)</strong></p>
+        <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+        <ul>
+          <li><strong>개인정보 보호책임자:</strong> 한정환</li>
+          <li><strong>연락처:</strong> 010-4227-8889</li>
+        </ul>
+        
+        <p><strong>시행일자</strong></p>
+        <p>이 개인정보처리방침은 2024년 1월 1일부터 적용됩니다.</p>
+      </div>
+    `;
+  }
+  
+  modalBody.innerHTML = content;
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+// 정책 링크 클릭 이벤트
+document.addEventListener('DOMContentLoaded', function() {
+  const termsLink = document.getElementById('termsLink');
+  const privacyLink = document.getElementById('privacyLink');
+  const closePolicyModal = document.getElementById('closePolicyModal');
+  const policyModal = document.getElementById('policyModal');
+  
+  if (termsLink) {
+    termsLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      openPolicyModal('terms');
+    });
+  }
+  
+  if (privacyLink) {
+    privacyLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      openPolicyModal('privacy');
+    });
+  }
+  
+  if (closePolicyModal) {
+    closePolicyModal.addEventListener('click', function() {
+      if (policyModal) {
+        policyModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
+  
+  // 정책 모달 외부 클릭 시 닫기
+  if (policyModal) {
+    policyModal.addEventListener('click', function(e) {
+      if (e.target === policyModal) {
+        policyModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
+  
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && policyModal && policyModal.style.display === 'block') {
+      policyModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  });
+});
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', function() {
+  updateTime();
+  renderGiftCards();
+  // 시간 업데이트 (1분마다)
+  setInterval(updateTime, 60000);
+});
+</script>
+
+</body>
+</html>

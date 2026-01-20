@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>상품권 현금교환 신청 | 이안티켓</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+
+<header class="shop-header">
+  <div class="header-container">
+    <div class="header-left">
+      <h1 class="shop-logo">상품권 현금교환 신청</h1>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="cart-icon-link">
+        <span class="cart-icon">🏠</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main-content" style="padding: 20px;">
+  <div class="apply-form-container">
+    <h2>상품권 선택</h2>
+    <p style="color: #666; margin-bottom: 20px;">판매하실 상품권을 선택해주세요.</p>
+    
+    <div id="selectedCardInfo" class="selected-card-info" style="display: none;">
+      <div class="info-card">
+        <h3 id="selectedCardName"></h3>
+        <p>매입 시세: <span id="selectedCardRate" style="font-weight: bold; color: #667eea;"></span>%</p>
+      </div>
+    </div>
+
+    <div class="gift-card-selector">
+      <label>상품권 종류</label>
+      <select id="giftCardType" class="form-select" onchange="updateSelectedCard()">
+        <option value="">상품권을 선택하세요</option>
+        <option value="cul_1">컬쳐랜드 상품권 (90.00%)</option>
+        <option value="cul_ex">컬쳐랜드 교환권 (90.00%)</option>
+        <option value="culture">문화상품권 (90.00%)</option>
+        <option value="culture_ex">문화 교환권 (90.00%)</option>
+        <option value="book">북앤라이프 (90.00%)</option>
+        <option value="book_ex">북앤라이프 교환권 (90.00%)</option>
+        <option value="tincash">틴캐시 (90.00%)</option>
+        <option value="lotte">롯데모바일 교환권 (93.00%)</option>
+        <option value="google">구글 교환권 (90.00%)</option>
+        <option value="starbucks_e">스타벅스 e카드 교환권 (85.00%)</option>
+        <option value="starbucks_24">스타벅스 기프트카드(24자리) (85.00%)</option>
+        <option value="tincash_ex">틴캐시 교환권 (90.00%)</option>
+        <option value="shinsegae">신세계모바일상품권 (93.00%)</option>
+      </select>
+    </div>
+
+    <hr style="margin: 30px 0;">
+
+    <h3>상품권 정보 입력</h3>
+    
+    <div class="form-group">
+      <label>상품권 금액</label>
+      <input type="number" id="giftCardAmount" class="form-input" placeholder="예: 50000" min="1000" step="1000" oninput="calculateAmount()">
+      <small style="color: #666;">최소 1,000원 이상 입력해주세요.</small>
+    </div>
+
+    <div class="form-group">
+      <label>상품권 번호</label>
+      <textarea id="giftCardNumber" class="form-textarea" placeholder="상품권 번호를 입력하세요 (여러 개일 경우 줄바꿈으로 구분)" rows="5"></textarea>
+      <small style="color: #666;">여러 개의 상품권을 등록할 경우 줄바꿈으로 구분해주세요.</small>
+    </div>
+
+    <div class="amount-calculation" id="amountCalculation" style="display: none;">
+      <div class="calc-item">
+        <span>상품권 금액:</span>
+        <span id="calcOriginal">₩0</span>
+      </div>
+      <div class="calc-item">
+        <span>매입 시세:</span>
+        <span id="calcRate">0%</span>
+      </div>
+      <div class="calc-item calc-total">
+        <span>예상 입금 금액:</span>
+        <span id="calcTotal">₩0</span>
+      </div>
+    </div>
+
+    <hr style="margin: 30px 0;">
+
+    <h3>입금 정보</h3>
+    
+    <div class="form-group">
+      <label>예금주</label>
+      <input type="text" id="accountHolder" class="form-input" placeholder="예금주명을 입력하세요" required>
+    </div>
+
+    <div class="form-group">
+      <label>은행</label>
+      <select id="bankName" class="form-select" required>
+        <option value="">은행을 선택하세요</option>
+        <option value="kb">KB국민은행</option>
+        <option value="shinhan">신한은행</option>
+        <option value="woori">우리은행</option>
+        <option value="hana">하나은행</option>
+        <option value="nh">NH농협은행</option>
+        <option value="ibk">IBK기업은행</option>
+        <option value="keb">KEB하나은행</option>
+        <option value="kakao">카카오뱅크</option>
+        <option value="toss">토스뱅크</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>계좌번호</label>
+      <input type="text" id="accountNumber" class="form-input" placeholder="계좌번호를 입력하세요" required>
+    </div>
+
+    <hr style="margin: 30px 0;">
+
+    <h3>연락처 정보</h3>
+    
+    <div class="form-group">
+      <label>이름</label>
+      <input type="text" id="customerName" class="form-input" placeholder="이름을 입력하세요" required>
+    </div>
+
+    <div class="form-group">
+      <label>휴대폰 번호</label>
+      <input type="tel" id="customerPhone" class="form-input" placeholder="010-0000-0000" required>
+    </div>
+
+    <div class="form-group">
+      <label>요청사항 (선택)</label>
+      <textarea id="memo" class="form-textarea" placeholder="요청사항이 있으시면 입력해주세요" rows="3"></textarea>
+    </div>
+
+    <div class="form-submit">
+      <button type="button" class="btn-primary" onclick="submitApplication()" style="width: 100%; padding: 18px; font-size: 1.2em;">
+        신청하기
+      </button>
+    </div>
+
+    <div class="notice-box" style="margin-top: 30px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+      <h4 style="margin-top: 0;">⚠️ 주의사항</h4>
+      <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>상품권 번호는 정확하게 입력해주세요.</li>
+        <li>입금은 상품권 검증 완료 후 1~2일 내 처리됩니다.</li>
+        <li>상품권 금액과 번호가 일치하지 않을 경우 거래가 취소될 수 있습니다.</li>
+        <li>문의사항은 고객센터로 연락주세요.</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<script>
+// 상품권 정보
+const giftCardTypes = {
+  'cul_1': { name: '컬쳐랜드 상품권', rate: 90.00 },
+  'cul_ex': { name: '컬쳐랜드 교환권', rate: 90.00 },
+  'culture': { name: '문화상품권', rate: 90.00 },
+  'culture_ex': { name: '문화 교환권', rate: 90.00 },
+  'book': { name: '북앤라이프', rate: 90.00 },
+  'book_ex': { name: '북앤라이프 교환권', rate: 90.00 },
+  'tincash': { name: '틴캐시', rate: 90.00 },
+  'lotte': { name: '롯데모바일 교환권', rate: 93.00 },
+  'google': { name: '구글 교환권', rate: 90.00 },
+  'starbucks_e': { name: '스타벅스 e카드 교환권', rate: 85.00 },
+  'starbucks_24': { name: '스타벅스 기프트카드(24자리)', rate: 85.00 },
+  'tincash_ex': { name: '틴캐시 교환권', rate: 90.00 },
+  'shinsegae': { name: '신세계모바일상품권', rate: 93.00 }
+};
+
+// 선택한 상품권 업데이트
+function updateSelectedCard() {
+  const type = document.getElementById('giftCardType').value;
+  const infoDiv = document.getElementById('selectedCardInfo');
+  
+  if (type && giftCardTypes[type]) {
+    const card = giftCardTypes[type];
+    document.getElementById('selectedCardName').textContent = card.name;
+    document.getElementById('selectedCardRate').textContent = card.rate.toFixed(2) + '%';
+    infoDiv.style.display = 'block';
+    calculateAmount();
+  } else {
+    infoDiv.style.display = 'none';
+  }
+}
+
+// 금액 계산
+function calculateAmount() {
+  const type = document.getElementById('giftCardType').value;
+  const amount = parseInt(document.getElementById('giftCardAmount').value) || 0;
+  const calcDiv = document.getElementById('amountCalculation');
+  
+  if (type && amount > 0 && giftCardTypes[type]) {
+    const card = giftCardTypes[type];
+    const rate = card.rate / 100;
+    const total = Math.floor(amount * rate);
+    
+    document.getElementById('calcOriginal').textContent = '₩' + amount.toLocaleString();
+    document.getElementById('calcRate').textContent = card.rate.toFixed(2) + '%';
+    document.getElementById('calcTotal').textContent = '₩' + total.toLocaleString();
+    calcDiv.style.display = 'block';
+  } else {
+    calcDiv.style.display = 'none';
+  }
+}
+
+// 신청서 제출
+function submitApplication() {
+  const type = document.getElementById('giftCardType').value;
+  const amount = parseInt(document.getElementById('giftCardAmount').value);
+  const cardNumber = document.getElementById('giftCardNumber').value.trim();
+  const accountHolder = document.getElementById('accountHolder').value.trim();
+  const bankName = document.getElementById('bankName').value;
+  const accountNumber = document.getElementById('accountNumber').value.trim();
+  const customerName = document.getElementById('customerName').value.trim();
+  const customerPhone = document.getElementById('customerPhone').value.trim();
+  const memo = document.getElementById('memo').value.trim();
+
+  // 유효성 검사
+  if (!type) {
+    alert('상품권 종류를 선택해주세요.');
+    return;
+  }
+  
+  if (!amount || amount < 1000) {
+    alert('상품권 금액을 올바르게 입력해주세요. (최소 1,000원)');
+    return;
+  }
+  
+  if (!cardNumber) {
+    alert('상품권 번호를 입력해주세요.');
+    return;
+  }
+  
+  if (!accountHolder || !bankName || !accountNumber) {
+    alert('입금 정보를 모두 입력해주세요.');
+    return;
+  }
+  
+  if (!customerName || !customerPhone) {
+    alert('연락처 정보를 모두 입력해주세요.');
+    return;
+  }
+
+  // 신청 정보 저장
+  const application = {
+    id: 'GC' + Date.now(),
+    type,
+    cardName: giftCardTypes[type].name,
+    rate: giftCardTypes[type].rate,
+    amount,
+    cardNumber,
+    accountHolder,
+    bankName,
+    accountNumber,
+    customerName,
+    customerPhone,
+    memo,
+    status: '대기중',
+    createdAt: new Date().toISOString(),
+    expectedAmount: Math.floor(amount * (giftCardTypes[type].rate / 100))
+  };
+
+  // 기존 주문 목록 가져오기
+  let orders = JSON.parse(localStorage.getItem('giftCardOrders')) || [];
+  orders.push(application);
+  localStorage.setItem('giftCardOrders', JSON.stringify(orders));
+
+  // 주문 완료 페이지로 이동
+  localStorage.setItem('lastOrderId', application.id);
+  window.location.href = 'order-complete.html';
+}
+
+// 페이지 로드 시 선택된 상품권 정보 확인
+document.addEventListener('DOMContentLoaded', function() {
+  const selectedCard = JSON.parse(localStorage.getItem('selectedGiftCard'));
+  if (selectedCard) {
+    document.getElementById('giftCardType').value = selectedCard.type;
+    updateSelectedCard();
+    localStorage.removeItem('selectedGiftCard');
+  }
+});
+</script>
+
+<style>
+.apply-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.selected-card-info {
+  margin-bottom: 20px;
+}
+
+.info-card {
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+}
+
+.info-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.3em;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85em;
+}
+
+.amount-calculation {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.calc-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.calc-item:last-child {
+  border-bottom: none;
+}
+
+.calc-total {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #667eea;
+  margin-top: 10px;
+  padding-top: 15px;
+  border-top: 2px solid #667eea;
+}
+
+.form-submit {
+  margin-top: 30px;
+}
+
+.notice-box h4 {
+  color: #856404;
+}
+
+.notice-box ul {
+  color: #856404;
+}
+
+.notice-box li {
+  margin: 5px 0;
+}
+</style>
+
+</body>
+</html>

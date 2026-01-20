@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>주문서 작성 | IAN SHOP</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    // 텔레그램 WebApp 강제 확장 (모바일 최적화)
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+
+<h1>주문서 작성</h1>
+
+<div class="page-nav">
+  <a href="index.html"><button>🏠 메인 화면으로</button></a>
+  <a href="index.html"><button>⬅ 이전 화면</button></a>
+  <a href="support.html"><button class="support-btn">💬 고객 상담</button></a>
+</div>
+
+<hr>
+
+<h3>주문 상품</h3>
+<div id="orderItems"></div>
+<p id="orderTotal"></p>
+
+<hr>
+
+<h3>주문자 정보</h3>
+<p style="font-size: 0.85em; color: #666; margin-top: -10px; margin-bottom: 15px;">(장바구니 많으면 입력 지연 잠시만 기다려주세요.)</p>
+<form onsubmit="submitOrder(event)">
+  <label>이름<br><input type="text" id="name" required autocomplete="name" style="pointer-events: auto !important; user-select: text !important;"></label><br><br>
+  <label>연락처<br><input type="tel" id="phone" required placeholder="010-0000-0000" autocomplete="tel" style="pointer-events: auto !important; user-select: text !important;"></label><br><br>
+  <label>배송 주소<br><input type="text" id="address" required autocomplete="street-address" style="pointer-events: auto !important; user-select: text !important;"></label><br><br>
+  <label>요청사항 (선택)<br><textarea id="memo" style="pointer-events: auto !important; user-select: text !important;"></textarea></label><br><br>
+  <button type="submit">결제 선택으로 이동</button>
+</form>
+
+<hr>
+<a href="index.html"><button>🏠 메인 화면으로</button></a>
+<a href="index.html"><button>⬅ 이전 화면</button></a>
+
+<script src="cart.js"></script>
+<script>
+// 입력 필드 활성화 함수 (최우선 처리)
+function enableInputFields() {
+  const inputs = document.querySelectorAll('input[type="text"], input[type="tel"], textarea');
+  inputs.forEach(input => {
+    // 모든 차단 속성 제거
+    input.removeAttribute('readonly');
+    input.removeAttribute('disabled');
+    input.removeAttribute('tabindex');
+    
+    // 스타일 강제 적용
+    input.style.pointerEvents = 'auto';
+    input.style.userSelect = 'text';
+    input.style.webkitUserSelect = 'text';
+    input.style.mozUserSelect = 'text';
+    input.style.msUserSelect = 'text';
+    input.style.cursor = 'text';
+    input.style.opacity = '1';
+    
+    // 이벤트 리스너 추가로 포커스 보장
+    input.addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.focus();
+    }, { passive: true });
+    
+    input.addEventListener('touchstart', function(e) {
+      e.stopPropagation();
+    }, { passive: true });
+  });
+}
+
+// 즉시 입력 필드 활성화 (최우선)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', enableInputFields);
+} else {
+  enableInputFields();
+}
+
+// 즉시 실행
+enableInputFields();
+setTimeout(enableInputFields, 0);
+
+// 상품 목록 렌더링 함수 (비동기 처리, 배치 렌더링)
+function renderOrderItems() {
+  const cart = getCart();
+  const itemsDiv = document.getElementById("orderItems");
+  const totalDiv = document.getElementById("orderTotal");
+
+  if (!itemsDiv || !totalDiv) return;
+
+  // 할인 정보 포함 총액 계산
+  const totals = calculateTotal();
+
+  // 총액 먼저 렌더링 (중요한 정보)
+  let totalHtml = `<div style="padding: 15px; background: #f5f5f5; border-radius: 8px; margin-top: 15px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+      <span>상품 금액:</span>
+      <span>₩${totals.subtotal.toLocaleString()}</span>
+    </div>`;
+
+  if(totals.discount > 0) {
+    totalHtml += `<div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #4CAF50;">
+      <span>할인 (${totals.discountText}):</span>
+      <span>-₩${totals.discount.toLocaleString()}</span>
+    </div>`;
+  }
+
+  totalHtml += `<div style="display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 2px solid #333; font-size: 1.2em; font-weight: bold;">
+      <span>총 결제 금액:</span>
+      <span>₩${totals.total.toLocaleString()}</span>
+    </div>
+  </div>`;
+
+  totalDiv.innerHTML = totalHtml;
+
+  // 상품 목록은 배치로 나누어 렌더링 (많은 항목일 때 UI 블로킹 방지)
+  if (cart.length > 10) {
+    // 많은 항목일 때 배치 렌더링
+    itemsDiv.innerHTML = '<div style="padding: 8px 0;">로딩 중...</div>';
+    
+    let index = 0;
+    const batchSize = 10;
+    
+    function renderBatch() {
+      const fragment = document.createDocumentFragment();
+      const end = Math.min(index + batchSize, cart.length);
+      
+      for (let i = index; i < end; i++) {
+        const item = cart[i];
+        const itemDiv = document.createElement('div');
+        itemDiv.style.padding = '8px 0';
+        itemDiv.style.borderBottom = '1px solid #eee';
+        itemDiv.textContent = `${item.name} × ${item.qty} (₩${(item.price*item.qty).toLocaleString()})`;
+        fragment.appendChild(itemDiv);
+      }
+      
+      if (index === 0) {
+        itemsDiv.innerHTML = '';
+      }
+      itemsDiv.appendChild(fragment);
+      
+      index = end;
+      
+      if (index < cart.length) {
+        // 다음 배치를 비동기로 렌더링
+        setTimeout(renderBatch, 0);
+      }
+    }
+    
+    renderBatch();
+  } else {
+    // 적은 항목일 때는 한 번에 렌더링
+    const fragment = document.createDocumentFragment();
+    cart.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.style.padding = '8px 0';
+      itemDiv.style.borderBottom = '1px solid #eee';
+      itemDiv.textContent = `${item.name} × ${item.qty} (₩${(item.price*item.qty).toLocaleString()})`;
+      fragment.appendChild(itemDiv);
+    });
+    itemsDiv.innerHTML = '';
+    itemsDiv.appendChild(fragment);
+  }
+}
+
+// DOM 로드 후 실행 - 입력 필드 먼저 활성화, 상품 목록은 나중에 렌더링
+document.addEventListener('DOMContentLoaded', function() {
+  // 입력 필드 즉시 활성화 (최우선)
+  enableInputFields();
+  
+  // 상품 목록은 비동기로 나중에 렌더링 (UI 블로킹 방지)
+  setTimeout(function() {
+    renderOrderItems();
+  }, 0);
+  
+  // 추가 보장
+  requestAnimationFrame(function() {
+    enableInputFields();
+    setTimeout(enableInputFields, 0);
+  });
+});
+
+// submitOrder 함수는 전역으로 유지
+function submitOrder(e){
+  e.preventDefault();
+  const cart = getCart();
+  const totals = calculateTotal();
+  
+  const orderInfo = {
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value,
+    memo: document.getElementById("memo").value,
+    cart,
+    total: totals.total,
+    subtotal: totals.subtotal,
+    discount: totals.discount,
+    discountText: totals.discountText,
+    coupon: totals.coupon
+  };
+  localStorage.setItem("order", JSON.stringify(orderInfo));
+  window.location.href = "secure-pay-v2.html";
+}
+</script>
+
+</body>
+</html>

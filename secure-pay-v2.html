@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>결제 선택 | IAN SHOP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=" id="styleSheet" />
+  <script src="https://telegram.org/js/telegram-web-app.js?v=" id="telegramScript"></script>
+  <script>
+    // 캐시 방지: CSS와 JS 경로에 타임스탬프 추가
+    const cacheBuster = Date.now();
+    document.getElementById('styleSheet').href = `style.css?v=${cacheBuster}`;
+    document.getElementById('telegramScript').src = `https://telegram.org/js/telegram-web-app.js?v=${cacheBuster}`;
+    
+    // 텔레그램 WebApp 강제 확장 (모바일 최적화)
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+<h2 style="color:red; background:yellow; text-align:center; padding:15px; margin:0; font-size:1.5em;">V2 - 업데이트 완료</h2>
+
+<h1>결제 선택</h1>
+
+<div class="page-nav">
+  <a href="index.html"><button>🏠 메인 화면으로</button></a>
+  <a href="order.html"><button>⬅ 주문 정보로 돌아가기</button></a>
+  <a href="support.html"><button class="support-btn">💬 고객 상담</button></a>
+</div>
+
+<hr>
+
+<div id="orderSummary"></div>
+
+<h3>결제 방법 선택</h3>
+<div class="payment-methods">
+  <button type="button" id="btn-kakao-new" class="payment-method kakao-pay">💳 카카오페이</button>
+  <button type="button" id="btn-card-new" class="payment-method card-pay">💳 카드결제</button>
+  <button type="button" id="btn-btc-new" class="payment-method bitcoin-pay">₿ 비트코인</button>
+</div>
+
+<hr>
+<div class="page-nav">
+  <a href="index.html"><button>🏠 메인 화면으로</button></a>
+  <a href="order.html"><button>⬅ 주문 정보로 돌아가기</button></a>
+</div>
+
+<!-- 고급 결제 모달 -->
+<div id="paymentModal" class="payment-modal-new" style="display: none;">
+  <div class="payment-modal-content-new">
+    <div class="payment-modal-header">
+      <h2 id="paymentModalTitle">결제 진행</h2>
+    </div>
+    <div class="payment-modal-body" id="paymentModalBody">
+      <!-- 동적으로 내용이 삽입됩니다 -->
+    </div>
+  </div>
+</div>
+
+<style>
+/* 결제 모달 새로운 스타일 */
+.payment-modal-new {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.payment-modal-content-new {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.payment-modal-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.payment-modal-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
+.payment-modal-body {
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 로딩 애니메이션 - 카카오페이 (노란색 바) */
+.loading-kakao {
+  width: 100%;
+  height: 60px;
+  background: #f0f0f0;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+  margin: 30px 0;
+}
+
+.loading-kakao::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #FEE500 0%, #FFD400 100%);
+  animation: kakaoLoading 1.5s ease-in-out infinite;
+}
+
+@keyframes kakaoLoading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 로딩 애니메이션 - 카드결제 (신용카드 아이콘 회전) */
+.loading-card {
+  width: 80px;
+  height: 80px;
+  margin: 30px auto;
+  position: relative;
+}
+
+.loading-card::before {
+  content: '💳';
+  position: absolute;
+  font-size: 60px;
+  animation: cardSpin 1s linear infinite;
+}
+
+@keyframes cardSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 로딩 애니메이션 - 비트코인 (코인 회전) */
+.loading-bitcoin {
+  width: 80px;
+  height: 80px;
+  margin: 30px auto;
+  position: relative;
+}
+
+.loading-bitcoin::before {
+  content: '₿';
+  position: absolute;
+  font-size: 60px;
+  color: #F7931A;
+  animation: bitcoinSpin 1s ease-in-out infinite;
+}
+
+@keyframes bitcoinSpin {
+  0%, 100% {
+    transform: rotateY(0deg) scale(1);
+  }
+  50% {
+    transform: rotateY(180deg) scale(1.2);
+  }
+}
+
+/* 상태 메시지 스타일 */
+.payment-status-message {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 20px 0;
+  min-height: 30px;
+  animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 버튼 눌림 효과 */
+.payment-method {
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  transform-origin: center;
+}
+
+.payment-method:active {
+  transform: scale(0.95);
+}
+
+.payment-method.processing {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.payment-methods.processing {
+  pointer-events: none;
+}
+
+/* 성공 아이콘 */
+.success-icon-large {
+  font-size: 80px;
+  color: #4CAF50;
+  margin: 20px 0;
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style>
+
+<script>
+// ============================================
+// 고급 결제 시스템 - 완전히 새로운 구현
+// ============================================
+
+let isProcessing = false;
+let currentPaymentMethod = '';
+let paymentSteps = [];
+let orderData = {};
+
+// 주문 정보 표시
+function displayOrderSummary() {
+  const order = JSON.parse(localStorage.getItem("order")) || {};
+  orderData = order;
+  
+  const summaryDiv = document.getElementById("orderSummary");
+  
+  if (order.cart && order.cart.length > 0) {
+    let html = `<div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%); border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">`;
+    
+    html += `<h3 style="margin-top: 0; color: #2c3e50;">주문 내역</h3>`;
+    
+    order.cart.forEach(item => {
+      html += `<div style="padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">`;
+      html += `<span>${item.name} × ${item.qty}</span>`;
+      html += `<span style="font-weight: 600;">₩${(item.price * item.qty).toLocaleString()}</span>`;
+      html += `</div>`;
+    });
+    
+    html += `<div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #2c3e50;">`;
+    html += `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #666;">`;
+    html += `<span>상품 금액:</span>`;
+    html += `<span>₩${(order.subtotal || order.total || 0).toLocaleString()}</span>`;
+    html += `</div>`;
+    
+    if (order.discount && order.discount > 0) {
+      html += `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #4CAF50;">`;
+      html += `<span>할인 (${order.discountText || '할인'}):</span>`;
+      html += `<span>-₩${order.discount.toLocaleString()}</span>`;
+      html += `</div>`;
+    }
+    
+    html += `<div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #2c3e50; font-size: 1.3em; font-weight: bold; color: #2c3e50;">`;
+    html += `<span>총 결제 금액:</span>`;
+    html += `<span style="color: #e74c3c;">₩${(order.total || 0).toLocaleString()}</span>`;
+    html += `</div>`;
+    html += `</div></div>`;
+    
+    summaryDiv.innerHTML = html;
+  }
+}
+
+// 결제 시작 함수
+function startAdvancedPayment(methodType) {
+  if (isProcessing) {
+    console.log('결제 처리 중입니다. 잠시만 기다려주세요.');
+    return;
+  }
+  
+  isProcessing = true;
+  currentPaymentMethod = methodType;
+  
+  // 버튼 비활성화
+  const allButtons = document.querySelectorAll('.payment-method');
+  const paymentMethods = document.querySelector('.payment-methods');
+  
+  allButtons.forEach(btn => btn.classList.add('processing'));
+  if (paymentMethods) {
+    paymentMethods.classList.add('processing');
+  }
+  
+  // 텔레그램 햅틱 피드백
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+    try {
+      window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    } catch (e) {
+      console.log('햅틱 피드백 실패:', e);
+    }
+  }
+  
+  // 모달 열기
+  openPaymentModal(methodType);
+}
+
+// 결제 모달 열기
+function openPaymentModal(methodType) {
+  const modal = document.getElementById('paymentModal');
+  const modalTitle = document.getElementById('paymentModalTitle');
+  const modalBody = document.getElementById('paymentModalBody');
+  
+  if (!modal || !modalTitle || !modalBody) {
+    console.error('결제 모달 요소를 찾을 수 없습니다.');
+    isProcessing = false;
+    return;
+  }
+  
+  // 결제 방법별 설정
+  const methodConfig = {
+    '카카오페이': {
+      title: '💳 카카오페이 결제',
+      loadingClass: 'loading-kakao'
+    },
+    '카드결제': {
+      title: '💳 카드 결제',
+      loadingClass: 'loading-card'
+    },
+    '비트코인': {
+      title: '₿ 비트코인 결제',
+      loadingClass: 'loading-bitcoin'
+    }
+  };
+  
+  const config = methodConfig[methodType];
+  if (!config) {
+    console.error('알 수 없는 결제 방법:', methodType);
+    isProcessing = false;
+    return;
+  }
+  
+  modalTitle.textContent = config.title;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // 결제 프로세스 시작
+  startPaymentProcess(methodType, config.loadingClass);
+}
+
+// 결제 프로세스 실행
+function startPaymentProcess(methodType, loadingClass) {
+  const modalBody = document.getElementById('paymentModalBody');
+  
+  // 상태 메시지 배열
+  const statusMessages = [
+    '결제 시도 중...',
+    '인증 확인 중...',
+    '최종 승인 완료'
+  ];
+  
+  let currentStep = 0;
+  
+  // 첫 번째 상태 표시
+  updatePaymentStatus(modalBody, methodType, loadingClass, statusMessages[currentStep]);
+  
+  // 1.2초 간격으로 상태 메시지 변경
+  const intervalId = setInterval(() => {
+    currentStep++;
+    
+    if (currentStep < statusMessages.length) {
+      updatePaymentStatus(modalBody, methodType, loadingClass, statusMessages[currentStep]);
+    } else {
+      clearInterval(intervalId);
+      
+      // 최종 승인 후 완료 화면 표시
+      setTimeout(() => {
+        showPaymentComplete(modalBody, methodType);
+      }, 1200);
+    }
+  }, 1200);
+}
+
+// 결제 상태 업데이트
+function updatePaymentStatus(modalBody, methodType, loadingClass, statusMessage) {
+  modalBody.innerHTML = `
+    <div class="${loadingClass}"></div>
+    <div class="payment-status-message">${statusMessage}</div>
+  `;
+}
+
+// 결제 완료 화면
+function showPaymentComplete(modalBody, methodType) {
+  // 주문 번호 생성
+  const orderNumber = generateOrderNumber();
+  
+  // 주문 완료 데이터 저장
+  const orderComplete = {
+    ...orderData,
+    paymentMethod: methodType,
+    orderNumber: orderNumber,
+    orderDate: new Date().toISOString(),
+    status: '결제완료'
+  };
+  localStorage.setItem('orderComplete', JSON.stringify(orderComplete));
+  
+  // 완료 화면 표시
+  modalBody.innerHTML = `
+    <div class="success-icon-large">✓</div>
+    <h3 style="color: #4CAF50; margin: 20px 0;">결제가 완료되었습니다!</h3>
+    <p style="font-size: 1.1em; color: #666; margin: 10px 0;">주문 번호: <strong style="color: #2c3e50;">${orderNumber}</strong></p>
+    <p style="font-size: 1.1em; color: #666; margin: 10px 0;">결제 금액: <strong style="color: #e74c3c;">₩${(orderData.total || 0).toLocaleString()}</strong></p>
+    <p style="color: #999; font-size: 0.9em; margin-top: 20px;">주문 완료 페이지로 이동합니다...</p>
+  `;
+  
+  // 2초 후 자동으로 주문 완료 페이지로 이동
+  setTimeout(() => {
+    window.location.href = 'order-complete.html';
+  }, 2000);
+}
+
+// 주문 번호 생성
+function generateOrderNumber() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return `ORD-${year}${month}${day}-${random}`;
+}
+
+// 초기화 함수
+function initializePaymentSystem() {
+  // 주문 정보 표시
+  displayOrderSummary();
+  
+  // 결제 버튼 이벤트 연결 (인라인 이벤트 금지 - addEventListener만 사용)
+  const kakaoBtn = document.getElementById('btn-kakao-new');
+  const cardBtn = document.getElementById('btn-card-new');
+  const btcBtn = document.getElementById('btn-btc-new');
+  
+  if (kakaoBtn) {
+    kakaoBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      startAdvancedPayment('카카오페이');
+    }, { passive: false });
+  }
+  
+  if (cardBtn) {
+    cardBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      startAdvancedPayment('카드결제');
+    }, { passive: false });
+  }
+  
+  if (btcBtn) {
+    btcBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      startAdvancedPayment('비트코인');
+    }, { passive: false });
+  }
+  
+  console.log('고급 결제 시스템 초기화 완료');
+}
+
+// DOM 로드 완료 시 초기화
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializePaymentSystem);
+} else {
+  // DOM이 이미 로드된 경우 즉시 실행
+  initializePaymentSystem();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>고객센터 | 이안티켓</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+
+<header class="shop-header">
+  <div class="header-container">
+    <div class="header-left">
+      <h1 class="shop-logo">고객센터</h1>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="cart-icon-link">
+        <span class="cart-icon">🏠</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main-content" style="padding: 20px;">
+  <h2 style="text-align: center; margin-bottom: 30px;">고객센터</h2>
+
+  <!-- 공지사항 섹션 -->
+  <div class="notice-section">
+    <h3>📢 공지사항</h3>
+    <div class="notice-list">
+      <div class="notice-item">
+        <div class="notice-title">[주의] 사칭 홈페이지 주의!!!</div>
+        <div class="notice-date">4개월 전</div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-title">2026년 1월 상품권 매입안내</div>
+        <div class="notice-date">19일 전</div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-title">2025년 12월 상품권 매입안내</div>
+        <div class="notice-date">1개월 전</div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-title">2025년 11월 상품권 매입안내</div>
+        <div class="notice-date">2개월 전</div>
+      </div>
+    </div>
+  </div>
+
+  <hr style="margin: 30px 0;">
+
+  <!-- FAQ 섹션 -->
+  <div class="faq-section">
+    <h2>자주 묻는 질문 (FAQ)</h2>
+    
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>💰 상품권 매입 시세는 어떻게 되나요?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <p>상품권 종류에 따라 매입 시세가 다릅니다. 컬쳐랜드, 문화상품권, 북앤라이프 등은 90%, 롯데모바일, 신세계모바일상품권은 93%, 스타벅스는 85%입니다. 정확한 시세는 메인 페이지에서 확인하실 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>⏰ 입금은 얼마나 걸리나요?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <p>상품권 검증은 평균 1~2시간 내 완료되며, 검증 완료 후 입금은 1~2일 내 처리됩니다. 영업일 기준으로 처리되며, 주말 및 공휴일은 제외됩니다.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>📋 주문 조회는 어떻게 하나요?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <p>메인 페이지의 '내 주문조회' 메뉴에서 이름과 휴대폰 번호를 입력하시면 최근 1년 이내 신청하신 주문을 조회하실 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>🔍 상품권 검증이 실패하면 어떻게 되나요?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <p>상품권 번호가 잘못 입력되었거나 이미 사용된 상품권인 경우 검증이 실패할 수 있습니다. 검증 실패 시 고객센터로 연락주시면 확인 후 안내해드리겠습니다.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>💳 어떤 상품권을 매입하나요?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <p>컬쳐랜드 상품권, 문화상품권, 북앤라이프, 틴캐시, 롯데모바일 교환권, 구글 교환권, 스타벅스 e카드/기프트카드, 신세계모바일상품권 등을 매입하고 있습니다. 자세한 내용은 메인 페이지에서 확인하실 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>📞 문의는 어떻게 하나요?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <p>고객센터 채팅을 통해 24시간 문의하실 수 있습니다. 급한 문의는 카카오톡으로 문의주시면 빠르게 처리해드릴게요!</p>
+      </div>
+    </div>
+  </div>
+
+  <hr style="margin: 30px 0;">
+
+  <!-- 문의 유형 선택 -->
+  <div class="inquiry-section">
+    <h2>문의 유형 선택</h2>
+    <div class="inquiry-buttons">
+      <button class="inquiry-btn" onclick="openChat('general')">
+        <span class="inquiry-icon">💬</span>
+        <span class="inquiry-text">일반 문의</span>
+      </button>
+      <button class="inquiry-btn" onclick="openChat('verification')">
+        <span class="inquiry-icon">🔍</span>
+        <span class="inquiry-text">검증 문의</span>
+      </button>
+      <button class="inquiry-btn" onclick="openChat('payment')">
+        <span class="inquiry-icon">💰</span>
+        <span class="inquiry-text">입금 문의</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- 채팅 모달 -->
+<div id="chatModal" class="chat-modal">
+  <div class="chat-modal-content">
+    <div class="chat-header">
+      <h3 id="chatTitle">고객 상담</h3>
+      <span class="chat-close" onclick="closeChat()">&times;</span>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-message bot-message">
+        <div class="message-content">
+          <p>안녕하세요! 이안티켓 고객 상담입니다. 무엇을 도와드릴까요? 😊</p>
+        </div>
+        <div class="message-time"></div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <div class="quick-buttons" id="quickButtons">
+        <button class="quick-btn" onclick="sendQuickMessage('입금 일정 문의')">입금 일정</button>
+        <button class="quick-btn" onclick="sendQuickMessage('검증 상태 문의')">검증 상태</button>
+        <button class="quick-btn" onclick="sendQuickMessage('상품권 종류 문의')">상품권 종류</button>
+      </div>
+      <div class="chat-input-container">
+        <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." onkeypress="handleChatKeyPress(event)">
+        <button onclick="sendMessage()" class="send-btn">전송</button>
+      </div>
+      <div class="chat-info">
+        <p>💡 카카오톡으로도 문의하실 수 있습니다.</p>
+        <p style="font-size: 0.85em; color: #666;">카카오톡: 이안티켓 고객센터</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// FAQ 토글
+function toggleFaq(element) {
+  const faqItem = element.parentElement;
+  const answer = faqItem.querySelector('.faq-answer');
+  const toggle = element.querySelector('.faq-toggle');
+  
+  const isOpen = answer.style.display === 'block';
+  
+  // 모든 FAQ 닫기
+  document.querySelectorAll('.faq-answer').forEach(item => {
+    item.style.display = 'none';
+  });
+  document.querySelectorAll('.faq-toggle').forEach(item => {
+    item.textContent = '+';
+  });
+  
+  // 클릭한 FAQ 토글
+  if (!isOpen) {
+    answer.style.display = 'block';
+    toggle.textContent = '−';
+    faqItem.classList.add('active');
+  } else {
+    faqItem.classList.remove('active');
+  }
+}
+
+// 채팅 열기
+function openChat(type) {
+  const modal = document.getElementById('chatModal');
+  const chatTitle = document.getElementById('chatTitle');
+  const chatBody = document.getElementById('chatBody');
+  
+  const titles = {
+    'general': '💬 일반 문의',
+    'verification': '🔍 검증 문의',
+    'payment': '💰 입금 문의'
+  };
+  
+  chatTitle.textContent = titles[type] || '고객 상담';
+  
+  const initialMessages = {
+    'general': '일반 문의를 도와드리겠습니다. 무엇이 궁금하신가요?',
+    'verification': '검증 문의를 도와드리겠습니다. 상품권 검증 상태나 문제에 대해 문의해주세요.',
+    'payment': '입금 문의를 도와드리겠습니다. 입금 일정이나 계좌 정보에 대해 문의해주세요.'
+  };
+  
+  chatBody.innerHTML = `
+    <div class="chat-message bot-message">
+      <div class="message-content">
+        <p>${initialMessages[type] || '안녕하세요! 무엇을 도와드릴까요?'}</p>
+      </div>
+      <div class="message-time">${getCurrentTime()}</div>
+    </div>
+  `;
+  
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  
+  setTimeout(() => {
+    document.getElementById('chatInput').focus();
+  }, 100);
+}
+
+// 채팅 닫기
+function closeChat() {
+  const modal = document.getElementById('chatModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// 메시지 전송
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  const chatBody = document.getElementById('chatBody');
+  
+  const userMessage = document.createElement('div');
+  userMessage.className = 'chat-message user-message';
+  userMessage.innerHTML = `
+    <div class="message-content">
+      <p>${message}</p>
+    </div>
+    <div class="message-time">${getCurrentTime()}</div>
+  `;
+  chatBody.appendChild(userMessage);
+  
+  input.value = '';
+  chatBody.scrollTop = chatBody.scrollHeight;
+  
+  setTimeout(() => {
+    const botResponse = getBotResponse(message);
+    const botMessage = document.createElement('div');
+    botMessage.className = 'chat-message bot-message';
+    botMessage.innerHTML = `
+      <div class="message-content">
+        <p>${botResponse}</p>
+      </div>
+      <div class="message-time">${getCurrentTime()}</div>
+    `;
+    chatBody.appendChild(botMessage);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }, 1000);
+}
+
+// 빠른 메시지 전송
+function sendQuickMessage(message) {
+  document.getElementById('chatInput').value = message;
+  sendMessage();
+}
+
+// 엔터 키 처리
+function handleChatKeyPress(event) {
+  if (event.key === 'Enter') {
+    sendMessage();
+  }
+}
+
+// 봇 응답 생성
+function getBotResponse(message) {
+  const lowerMessage = message.toLowerCase();
+  
+  if (lowerMessage.includes('입금') || lowerMessage.includes('돈') || lowerMessage.includes('계좌')) {
+    return '입금은 상품권 검증 완료 후 1~2일 내 처리됩니다. 영업일 기준으로 처리되며, 주말 및 공휴일은 제외됩니다. 입금 정보는 신청 시 입력하신 계좌로 자동 입금됩니다.';
+  } else if (lowerMessage.includes('검증') || lowerMessage.includes('확인')) {
+    return '상품권 검증은 평균 1~2시간 내 완료됩니다. 검증 상태는 "내 주문조회"에서 확인하실 수 있습니다. 검증이 지연되는 경우 고객센터로 문의해주세요.';
+  } else if (lowerMessage.includes('시세') || lowerMessage.includes('가격') || lowerMessage.includes('비율')) {
+    return '상품권 종류에 따라 매입 시세가 다릅니다. 컬쳐랜드, 문화상품권 등은 90%, 롯데모바일, 신세계모바일상품권은 93%, 스타벅스는 85%입니다. 정확한 시세는 메인 페이지에서 확인하실 수 있습니다.';
+  } else if (lowerMessage.includes('상품권') || lowerMessage.includes('종류')) {
+    return '컬쳐랜드 상품권, 문화상품권, 북앤라이프, 틴캐시, 롯데모바일 교환권, 구글 교환권, 스타벅스 e카드/기프트카드, 신세계모바일상품권 등을 매입하고 있습니다.';
+  } else {
+    return '문의 감사합니다. 더 자세한 내용은 카카오톡으로 문의주시거나, 고객센터(010-4227-8889)로 연락주세요.';
+  }
+}
+
+// 현재 시간 포맷
+function getCurrentTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+// 모달 외부 클릭 시 닫기
+document.addEventListener('click', function(event) {
+  const chatModal = document.getElementById('chatModal');
+  if (event.target === chatModal) {
+    closeChat();
+  }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeChat();
+  }
+});
+</script>
+
+<style>
+.notice-section {
+  margin-bottom: 30px;
+}
+
+.notice-section h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5em;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notice-item {
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.notice-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.notice-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.notice-date {
+  font-size: 0.85em;
+  color: #666;
+}
+</style>
+
+</body>
+</html>

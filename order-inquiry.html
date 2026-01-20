@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>내 주문조회 | 이안티켓</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+
+<header class="shop-header">
+  <div class="header-container">
+    <div class="header-left">
+      <h1 class="shop-logo">내 주문조회</h1>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="cart-icon-link">
+        <span class="cart-icon">🏠</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main-content" style="padding: 20px;">
+  <div class="inquiry-form-container">
+    <h2>고객님의 성함과<br>휴대폰 번호를<br>입력해주세요.</h2>
+    
+    <form id="inquiryForm" onsubmit="searchOrders(event)">
+      <div class="form-group">
+        <label>고객명</label>
+        <input type="text" id="customerName" class="form-input" placeholder="이름을 입력하세요" required>
+      </div>
+
+      <div class="form-group">
+        <label>휴대폰 번호</label>
+        <input type="tel" id="customerPhone" class="form-input" placeholder="010-0000-0000" required>
+      </div>
+
+      <div class="form-submit">
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 18px; font-size: 1.2em;">
+          조회하기
+        </button>
+      </div>
+    </form>
+
+    <p style="text-align: center; color: #666; margin-top: 20px; font-size: 0.9em;">
+      최근 1년이내에 신청하신 주문을 조회하실 수 있어요
+    </p>
+  </div>
+
+  <div id="orderResults" class="order-results" style="display: none;">
+    <h3>주문 내역</h3>
+    <div id="orderList"></div>
+  </div>
+
+  <div id="noOrders" class="no-orders" style="display: none;">
+    <p style="text-align: center; color: #666; padding: 40px;">
+      고객님의 주문이 조회되지 않습니다.
+    </p>
+  </div>
+</main>
+
+<script>
+// 주문 조회
+function searchOrders(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById('customerName').value.trim();
+  const phone = document.getElementById('customerPhone').value.trim();
+  
+  if (!name || !phone) {
+    alert('이름과 휴대폰 번호를 모두 입력해주세요.');
+    return;
+  }
+
+  // 주문 목록 가져오기
+  const orders = JSON.parse(localStorage.getItem('giftCardOrders')) || [];
+  
+  // 이름과 전화번호로 필터링
+  const matchedOrders = orders.filter(order => 
+    order.customerName === name && order.customerPhone === phone
+  );
+
+  const resultsDiv = document.getElementById('orderResults');
+  const noOrdersDiv = document.getElementById('noOrders');
+  const orderListDiv = document.getElementById('orderList');
+
+  if (matchedOrders.length === 0) {
+    resultsDiv.style.display = 'none';
+    noOrdersDiv.style.display = 'block';
+  } else {
+    noOrdersDiv.style.display = 'none';
+    resultsDiv.style.display = 'block';
+    
+    // 주문 목록 렌더링
+    orderListDiv.innerHTML = matchedOrders.map(order => {
+      const date = new Date(order.createdAt);
+      const dateStr = date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      return `
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-id">주문번호: ${order.id}</div>
+            <div class="order-date">${dateStr}</div>
+          </div>
+          <div class="order-content">
+            <div class="order-item">
+              <span class="order-label">상품권:</span>
+              <span class="order-value">${order.cardName}</span>
+            </div>
+            <div class="order-item">
+              <span class="order-label">금액:</span>
+              <span class="order-value">₩${order.amount.toLocaleString()}</span>
+            </div>
+            <div class="order-item">
+              <span class="order-label">매입 시세:</span>
+              <span class="order-value">${order.rate}%</span>
+            </div>
+            <div class="order-item">
+              <span class="order-label">예상 입금액:</span>
+              <span class="order-value highlight">₩${order.expectedAmount.toLocaleString()}</span>
+            </div>
+            <div class="order-item">
+              <span class="order-label">상태:</span>
+              <span class="order-status ${getStatusClass(order.status)}">${getStatusText(order.status)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 햅틱 피드백
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+  }
+}
+
+function getStatusText(status) {
+  const statusMap = {
+    '대기중': '대기중',
+    '검증중': '검증중',
+    '입금완료': '입금완료',
+    '완료': '완료',
+    '취소': '취소됨'
+  };
+  return statusMap[status] || '대기중';
+}
+
+function getStatusClass(status) {
+  const classMap = {
+    '대기중': 'pending',
+    '검증중': 'processing',
+    '입금완료': 'completed',
+    '완료': 'completed',
+    '취소': 'cancelled'
+  };
+  return classMap[status] || 'pending';
+}
+</script>
+
+<style>
+.inquiry-form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.inquiry-form-container h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5em;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.order-results {
+  margin-top: 30px;
+}
+
+.order-results h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5em;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eee;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.order-date {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.order-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-label {
+  color: #666;
+}
+
+.order-value {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.order-value.highlight {
+  color: #667eea;
+  font-size: 1.1em;
+}
+
+.order-status {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.order-status.pending {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.order-status.processing {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.order-status.completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.order-status.cancelled {
+  background: #ffebee;
+  color: #c62828;
+}
+</style>
+
+</body>
+</html>

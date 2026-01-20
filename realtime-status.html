@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>실시간 진행 현황 | 이안티켓</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    (function() {
+      function forceExpand() {
+        if (window.Telegram && window.Telegram.WebApp) {
+          try {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            if (window.Telegram.WebApp.viewportHeight) {
+              window.Telegram.WebApp.expand();
+            }
+          } catch (e) {
+            console.error('텔레그램 WebApp 확장 오류:', e);
+          }
+        }
+      }
+      forceExpand();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceExpand);
+      }
+      setTimeout(forceExpand, 100);
+      setTimeout(forceExpand, 500);
+      window.addEventListener('load', forceExpand);
+    })();
+  </script>
+</head>
+<body>
+
+<header class="shop-header">
+  <div class="header-container">
+    <div class="header-left">
+      <h1 class="shop-logo">실시간 진행 현황</h1>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="cart-icon-link">
+        <span class="cart-icon">🏠</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main-content" style="padding: 20px;">
+  <div class="status-header">
+    <h2>최근 매입 현황입니다</h2>
+    <p style="color: #666; margin-bottom: 20px;">실시간으로 업데이트되는 매입 현황을 확인하실 수 있습니다.</p>
+  </div>
+
+  <div id="statusList" class="status-list">
+    <!-- 동적으로 생성됨 -->
+  </div>
+
+  <div class="refresh-btn-container">
+    <button class="btn-secondary" onclick="refreshStatus()" style="width: 100%; padding: 15px; margin-top: 20px;">
+      🔄 새로고침
+    </button>
+  </div>
+</main>
+
+<script>
+// 샘플 매입 현황 데이터
+const sampleStatuses = [
+  { cardName: '컬쳐랜드(16핀)', count: 1, amount: 50000, customer: '강*문', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 1, amount: 5000, customer: '박*지', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 3, amount: 25000, customer: '도*진', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 3, amount: 150000, customer: '이*조', status: '입금완료', icon: '🎫' },
+  { cardName: '문화상품권(18핀)', count: 4, amount: 40000, customer: '이*진', status: '입금완료', icon: '🎭' },
+  { cardName: '컬쳐랜드(16핀)', count: 4, amount: 200000, customer: '김*태', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 1, amount: 30000, customer: '이*조', status: '입금완료', icon: '🎫' },
+  { cardName: '틴캐시', count: 1, amount: 50000, customer: '표*환', status: '입금완료', icon: '💳' },
+  { cardName: '컬쳐랜드 교환권', count: 1, amount: 30000, customer: '하*석', status: '입금완료', icon: '🎟️' },
+  { cardName: '컬쳐랜드(16핀)', count: 6, amount: 300000, customer: '원*훈', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 1, amount: 200000, customer: '김*구', status: '입금완료', icon: '🏪' },
+  { cardName: '컬쳐랜드(16핀)', count: 2, amount: 60000, customer: '곽*정', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 6, amount: 300000, customer: '김*구', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 4, amount: 200000, customer: '원*훈', status: '입금완료', icon: '🎫' },
+  { cardName: '컬쳐랜드(16핀)', count: 7, amount: 350000, customer: '곽*정', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 2, amount: 600000, customer: '문*수', status: '입금완료', icon: '🏪' },
+  { cardName: '컬쳐랜드(16핀)', count: 3, amount: 90000, customer: '조*훈', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 1, amount: 50000, customer: '박*우', status: '입금완료', icon: '🏪' },
+  { cardName: '컬쳐랜드(16핀)', count: 2, amount: 100000, customer: '이*지', status: '입금완료', icon: '🎫' },
+  { cardName: '롯데모바일 교환권', count: 2, amount: 600000, customer: '신*철', status: '입금완료', icon: '🏪' }
+];
+
+// 실제 주문 데이터와 합치기
+function getStatusList() {
+  const orders = JSON.parse(localStorage.getItem('giftCardOrders')) || [];
+  const statusList = [];
+  
+  // 실제 주문 데이터 변환
+  orders.forEach(order => {
+    statusList.push({
+      cardName: order.cardName,
+      count: 1,
+      amount: order.amount,
+      customer: order.customerName ? order.customerName.replace(/(?<=.{1})./g, '*') : '고*객',
+      status: getStatusText(order.status),
+      icon: getCardIcon(order.type)
+    });
+  });
+  
+  // 샘플 데이터와 합치기
+  return [...statusList, ...sampleStatuses].slice(0, 20);
+}
+
+function getStatusText(status) {
+  const statusMap = {
+    '대기중': '검증중',
+    '검증중': '검증중',
+    '입금완료': '입금완료',
+    '완료': '입금완료',
+    '취소': '취소됨'
+  };
+  return statusMap[status] || '검증중';
+}
+
+function getCardIcon(type) {
+  const iconMap = {
+    'cul_1': '🎫',
+    'cul_ex': '🎟️',
+    'culture': '🎭',
+    'culture_ex': '🎨',
+    'book': '📚',
+    'book_ex': '📖',
+    'tincash': '💳',
+    'lotte': '🏪',
+    'google': '🔍',
+    'starbucks_e': '☕',
+    'starbucks_24': '☕',
+    'tincash_ex': '💳',
+    'shinsegae': '🛍️'
+  };
+  return iconMap[type] || '🎫';
+}
+
+// 현황 목록 렌더링
+function renderStatusList() {
+  const statusList = getStatusList();
+  const container = document.getElementById('statusList');
+  
+  if (!container) return;
+  
+  if (statusList.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">매입 현황이 없습니다.</p>';
+    return;
+  }
+  
+  container.innerHTML = statusList.map(status => `
+    <div class="status-item">
+      <div class="status-icon">${status.icon}</div>
+      <div class="status-info">
+        <div class="status-card-name">${status.cardName} ${status.count}매${status.amount.toLocaleString()}원</div>
+        <div class="status-customer">${status.customer}님</div>
+      </div>
+      <div class="status-badge ${status.status === '입금완료' ? 'completed' : 'pending'}">
+        ${status.status}
+      </div>
+    </div>
+  `).join('');
+}
+
+// 새로고침
+function refreshStatus() {
+  renderStatusList();
+  // 햅틱 피드백
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+  }
+}
+
+// 페이지 로드 시 렌더링
+document.addEventListener('DOMContentLoaded', function() {
+  renderStatusList();
+  // 30초마다 자동 새로고침
+  setInterval(renderStatusList, 30000);
+});
+</script>
+
+<style>
+.status-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.status-header h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8em;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.status-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.status-icon {
+  font-size: 2em;
+  flex-shrink: 0;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-card-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.status-customer {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.status-badge.completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.pending {
+  background: #fff3e0;
+  color: #e65100;
+}
+</style>
+
+</body>
+</html>
