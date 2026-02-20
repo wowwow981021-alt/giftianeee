@@ -1,166 +1,29 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>신청 완료 | 이안티켓</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    (function() {
-      function forceExpand() {
-        if (window.Telegram && window.Telegram.WebApp) {
-          try {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-            if (window.Telegram.WebApp.viewportHeight) {
-              window.Telegram.WebApp.expand();
-            }
-          } catch (e) {
-            console.error('텔레그램 WebApp 확장 오류:', e);
-          }
-        }
-      }
-      forceExpand();
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', forceExpand);
-      }
-      setTimeout(forceExpand, 100);
-      setTimeout(forceExpand, 500);
-      window.addEventListener('load', forceExpand);
-    })();
-  </script>
-</head>
-<body>
-
-<div class="order-complete-container">
-  <div class="complete-icon">✓</div>
-  <h1>상품권 현금교환 신청이<br>완료되었습니다!</h1>
-  
-  <div class="order-info-card">
-    <h2>신청 정보</h2>
-    <div id="orderCompleteInfo"></div>
-  </div>
-  
-  <div class="notice-box" style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 12px; border-left: 4px solid #2196F3;">
-    <h4 style="margin-top: 0; color: #1976d2;">📋 처리 안내</h4>
-    <ul style="margin: 10px 0; padding-left: 20px; color: #1565c0;">
-      <li>상품권 검증은 평균 1~2시간 내 완료됩니다.</li>
-      <li>검증 완료 후 입금은 1~2일 내 처리됩니다.</li>
-      <li>처리 상태는 '내 주문조회'에서 확인하실 수 있습니다.</li>
-      <li>문의사항은 고객센터로 연락주세요.</li>
-    </ul>
-  </div>
-  
-  <div class="order-actions">
-    <a href="index.html"><button class="btn-primary">메인으로</button></a>
-    <a href="order-inquiry.html"><button class="btn-secondary">주문 조회</button></a>
-  </div>
-</div>
-
-<script>
 const lastOrderId = localStorage.getItem('lastOrderId');
 const orders = JSON.parse(localStorage.getItem('giftCardOrders')) || [];
 const order = orders.find(o => o.id === lastOrderId);
 
 if (order) {
+  // ==========================================
+  // [신규 추가] 관리자 백엔드 서버로 데이터 전송
+  // ==========================================
+  if (!order.isSentToServer) {
+    fetch('http://127.0.0.1:5000/api/submit-exchange', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    })
+    .then(response => response.json())
+    .then(result => {
+      if(result.success) {
+        order.isSentToServer = true; // 중복 전송 방지용 도장 쾅!
+        localStorage.setItem('giftCardOrders', JSON.stringify(orders));
+        console.log("관리자 페이지로 전송 성공!");
+      }
+    })
+    .catch(err => console.error("서버 전송 에러:", err));
+  }
+  // ==========================================
+
   const infoDiv = document.getElementById('orderCompleteInfo');
   
-  const date = new Date(order.createdAt);
-  const dateStr = date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-  
-  let html = `
-    <div class="info-item">
-      <span class="info-label">신청 번호</span>
-      <span class="info-value">${order.id}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">상품권 종류</span>
-      <span class="info-value">${order.cardName}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">상품권 금액</span>
-      <span class="info-value">₩${order.amount.toLocaleString()}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">매입 시세</span>
-      <span class="info-value">${order.rate}%</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">예상 입금액</span>
-      <span class="info-value highlight">₩${order.expectedAmount.toLocaleString()}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">신청 일시</span>
-      <span class="info-value">${dateStr}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">처리 상태</span>
-      <span class="info-value status-badge pending">검증중</span>
-    </div>
-  `;
-  
-  if (order.accountHolder) {
-    html += `
-      <div class="delivery-info" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee;">
-        <h3>입금 정보</h3>
-        <p><strong>은행:</strong> ${getBankName(order.bankName)}</p>
-        <p><strong>계좌번호:</strong> ${order.accountNumber}</p>
-        <p><strong>예금주:</strong> ${order.accountHolder}</p>
-      </div>
-    `;
-  }
-  
-  infoDiv.innerHTML = html;
-} else {
-  document.getElementById('orderCompleteInfo').innerHTML = 
-    '<p>신청 정보를 찾을 수 없습니다.</p>';
-}
-
-function getBankName(code) {
-  const banks = {
-    'kb': 'KB국민은행',
-    'shinhan': '신한은행',
-    'woori': '우리은행',
-    'hana': '하나은행',
-    'nh': 'NH농협은행',
-    'ibk': 'IBK기업은행',
-    'keb': 'KEB하나은행',
-    'kakao': '카카오뱅크',
-    'toss': '토스뱅크'
-  };
-  return banks[code] || code;
-}
-</script>
-
-<style>
-.highlight {
-  color: #667eea;
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 15px;
-  font-size: 0.9em;
-  font-weight: 600;
-}
-
-.status-badge.pending {
-  background: #fff3e0;
-  color: #e65100;
-}
-</style>
-
-</body>
-</html>
+  // ... (이 아래로는 기존에 있던 const date = new Date(order.createdAt); 코드가 그대로 이어집니다) ...
